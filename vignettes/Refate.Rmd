@@ -1,0 +1,134 @@
+---
+title: "An introduction to Refate package"
+author:
+- name: Di Xiao
+  affiliation:
+  - Computational Systems Biology Group, Children’s Medical Research Institute, Faculty of Medicine and Health, The University of Sydney
+- name: Pengyi Yang
+  affiliation:
+  - School of Mathematics and Statistics, The University of Sydney
+  - Computational Systems Biology Group, Children’s Medical Research Institute, Faculty of Medicine and Health, The University of Sydney
+  - Charles Perkins Centre, The University of Sydney
+output:
+  BiocStyle::html_document:
+    toc_newpage: true
+    fig_retina: NULL
+package: BiocStyle
+vignette: >
+  %\VignetteIndexEntry{An introduction to Refate package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Installation
+
+Install the latest development version from GitHub using the `devtools` package:
+
+```{r, eval = FALSE}
+library(devtools)
+devtools::install()    # install the package
+
+```
+
+# Loading packages and data
+```{r}
+library(Refate)
+library(igraph)
+library(parallel)
+
+# Load precomputed CPS list and TF-target interaction data
+data(CPSs)    # Precomputed CPS values for human and mouse
+data(TFtarget)    # TF-target interaction network
+data(drugDB.weight)  # Drug-target interaction data
+data(TFs_Kinases)
+data(StringDB)
+data(drugbases_metas)
+```
+
+# Calculate Cellular Conversion Score (CCS)
+```{r}
+# Example fold-change values (replace with your own)
+data(fc.fibroblast2hiPSC)
+
+# Calculate CCS for human genes
+CCS <- calcCCS(fc.fibroblast2hiPSC, specie = "human")
+
+# View the top CCS scores
+head(sort(CCS, decreasing = TRUE))
+
+# Plot the CCS for known TFs
+tf.fibroblast2hiPSC = unique(c("POU5F1", "SOX2", "KLF4", "MYC", 
+                      "OCT4", "SOX2", "NANOG", "LIN28", # https://doi.org/10.1126/science.1151526
+                      "ESRRB", "UTF1", "LIN28B", "DPPA2", # https://doi.org/10.1016/j.cell.2012.08.023
+                      "GLIS1", # https://doi.org/10.1038/nature10106
+                      "NR5A2", # https://doi.org/10.1016/j.stem.2009.12.009
+                      "MYCN",
+                      "HMGA1"
+                      ))
+
+p <- rank.plot(CCS, gt = tf.fibroblast2hiPSC)
+p
+```
+
+# Prioritize Drugs
+```{r, fig.width=2, fig.height=4}
+
+# Prioritize drugs
+DPS <- calcDrugScore(
+  CCS,
+  community_cutoff = 10,
+  community_cutoff2 = 600,
+  filtering = TRUE,
+  drugTarget_cutoff = 500,
+  TFWeight = 2
+)
+
+# View the top-ranked drugs
+head(DPS)
+```
+
+
+# build the TRNs
+We can build the transcriptional regulatory networks (TRNs) for a given drug. For example, we can build the TRNs for the known drug "Quercetin" by using the following code:
+
+```{r}
+TRNs <- build_TRNs(
+  drug = "quercetin", 
+  CCS, 
+  kinome, 
+  TFs, 
+  StringDB, 
+  TFtarget, 
+  CCS_threshold = 0.02 # the threshold for selecting genes within the TRN
+)
+
+TRNs
+
+```
+
+# Get drug annotations
+We can get drug information from different drug databases
+
+```{r}
+drug_name <- get_drug_name("chir99021")
+drug_annotations <- get_drug_annotations("chir99021")
+drug_description <- get_drug_description("chir99021")
+```
+
+# Look for drugs with similar mechanisms of action with the known chemical compound
+for example, we can find drugs with similar mechanisms of action with the known chemical compound "chir99021" by using the following code:
+
+```{r}
+top_drugs <- names(DPS)[which(DPS > 0.9) ]
+print(paste0("the number of top drugs: ", length(top_drugs)))
+  
+similar_drugs <- identify_similar_drugs(known_drug = "chir99021",
+                                        top_drugs,
+                                        CCS,
+                                        drugDB.weight,
+                                        method = "spearman",
+                                        top = 30)
+similar_drugs
+```
+
+
