@@ -12,7 +12,6 @@ drugScoringPerSubgraph <- function(drug,
   targeted_subgraph_indices <- c()
   # Loop over the subgraphs
   for (i in 1:length(community_graphs)) {
-    print(i)
     # Get the gene names for this subgraph
     subgraph_genes <- V(community_graphs[[i]])$name
     # Find which of these genes are targeted by the drug
@@ -101,7 +100,6 @@ identify_similar_drugs <- function(top_drugs,
   names(drugByconversion_subgraph) <- top_drugs
   drugByconversion_subgraph.re <- do.call(cbind, drugByconversion_subgraph)
 
-  # Calculate correlation of each drug with the known drug
   correlations <- sapply(colnames(drugByconversion_subgraph.re), function(drug) {
     cor(drugByconversion_subgraph.re[, drug], drugByconversion_subgraph.re[, known_drug], method = method)
   })

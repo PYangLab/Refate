@@ -27,14 +27,18 @@ Install the latest development version from GitHub using the `devtools` package:
 ```{r, eval = FALSE}
 library(devtools)
 devtools::install()    # install the package
-
 ```
 
 # Loading packages and data
 ```{r}
-library(Refate)
-library(igraph)
-library(parallel)
+suppressMessages(
+  {
+    library(Refate)
+    library(igraph)
+    library(tidyverse)
+    library(parallel)
+  }
+)
 
 # Load precomputed CPS list and TF-target interaction data
 data(CPSs)    # Precomputed CPS values for human and mouse
@@ -71,7 +75,7 @@ p
 ```
 
 # Prioritize Drugs
-```{r, fig.width=2, fig.height=4}
+```{r, fig.width=2, fig.height=4, warning=FALSE}
 
 # Prioritize drugs
 DPS <- calcDrugScore(
@@ -85,6 +89,7 @@ DPS <- calcDrugScore(
 
 # View the top-ranked drugs
 head(DPS)
+
 ```
 
 
@@ -103,7 +108,6 @@ TRNs <- build_TRNs(
 )
 
 TRNs
-
 ```
 
 # Get drug annotations
@@ -111,14 +115,18 @@ We can get drug information from different drug databases
 
 ```{r}
 drug_name <- get_drug_name("chir99021")
+drug_name 
 drug_annotations <- get_drug_annotations("chir99021")
+drug_annotations
 drug_description <- get_drug_description("chir99021")
+drug_description
 ```
 
 # Look for drugs with similar mechanisms of action with the known chemical compound
 for example, we can find drugs with similar mechanisms of action with the known chemical compound "chir99021" by using the following code:
 
-```{r}
+```{r, warning=FALSE}
+## we first identify the top drugs
 top_drugs <- names(DPS)[which(DPS > 0.9) ]
 print(paste0("the number of top drugs: ", length(top_drugs)))
   
@@ -128,7 +136,7 @@ similar_drugs <- identify_similar_drugs(known_drug = "chir99021",
                                         drugDB.weight,
                                         method = "spearman",
                                         top = 30)
-similar_drugs
+head(similar_drugs)
 ```
 
 
