@@ -93,7 +93,7 @@ head(DPS)
 ```
 
 
-# build the TRNs
+# Build the TRNs
 We can build the transcriptional regulatory networks (TRNs) for a given drug. For example, we can build the TRNs for the known drug "Quercetin" by using the following code:
 
 ```{r}
