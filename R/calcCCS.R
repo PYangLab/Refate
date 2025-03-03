@@ -7,7 +7,8 @@
 #'
 #' @return A named numeric vector of CCS values.
 #'
-calcCCS <- function(fc, specie = "human") {
+calcCCS <- function(fc, specie = "Human") {
+  specie <- tolower(specie)
   if (specie == "human") {
     o <- intersect(names(fc), names(CPSs$human.combined))
     CCS <- fc[o] * CPSs$human.combined[o]
