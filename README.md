@@ -21,4 +21,4 @@ The full vignette is available at [link](https://pyanglab.github.io/Refate/Refat
 
 ## Contact us
 
-If you have any enquiries, please contact [dxiao\@cmri.org.au](mailto:dxiao@cmri.org.au){.email}. We are also happy to receive any suggestions and comments.
+If you have any enquiries, please contact [dxiao\@cmri.org.au](mailto:dxiao@cmri.org.au). We are also happy to receive any suggestions and comments.
