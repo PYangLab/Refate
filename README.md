@@ -17,7 +17,7 @@ devtools::install_github("PYangLab/Refate")
 
 ## Vignette
 
-The full vignette is available at [link](https://htmlpreview.github.io/?https://raw.githubusercontent.com/PYangLab/Refate/main/vignettes/Refate.html)
+The full vignette is available at [link](https://www.dropbox.com/scl/fi/1gbesd7o18dv5thfdmzxs/Refate.html?rlkey=zf71vkd8fqfhgelfrvyy7jrsl&st=0ukauqsr&dl=0)
 
 ## Contact us
 
