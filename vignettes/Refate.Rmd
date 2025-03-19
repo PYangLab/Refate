@@ -51,7 +51,7 @@ data(drugbases_metas)
 
 # Calculate Cellular Conversion Score (CCS)
 ```{r}
-# Example fold-change values (replace with your own)
+# Example log2 fold-change values (replace with your own)
 data(fc.fibroblast2hiPSC)
 
 # Calculate CCS for human genes
