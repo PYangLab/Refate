@@ -90,6 +90,8 @@ DPS <- calcDrugScore(
 # View the top-ranked drugs
 head(DPS)
 
+
+DPS[grep("quercetin", names(DPS))]
 ```
 
 
@@ -98,7 +100,7 @@ We can build the transcriptional regulatory networks (TRNs) for a given drug. Fo
 
 ```{r}
 TRNs <- build_TRNs(
-  drug = "quercetin", 
+  drug = "luteolin", 
   CCS, 
   kinome, 
   TFs, 
@@ -115,11 +117,11 @@ TRNs
 We can get drug information from different drug databases
 
 ```{r}
-drug_name <- get_drug_name("chir99021")
+drug_name <- get_drug_name("luteolin")
 drug_name 
-drug_annotations <- get_drug_annotations("chir99021")
+drug_annotations <- get_drug_annotations("luteolin")
 drug_annotations
-drug_description <- get_drug_description("chir99021")
+drug_description <- get_drug_description("luteolin")
 drug_description
 ```
 

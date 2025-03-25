@@ -121,30 +121,41 @@ drugPrediction <- function(drug,
 #'
 #' @return A named numeric vector of drug scores.
 #'
-calcDrugScore <- function(CCS,
-                          community_cutoff = 10,
-                          community_cutoff2 = 600,
-                          filtering = TRUE,
-                          drugTarget_cutoff = 500,
-                          TFWeight = 2) {
-
-  drugdb <- drugDB.weight[sapply(drugDB.weight, length) < drugTarget_cutoff] # Filter drug-target relationships
+calcDrugScore <- function (CCS, 
+                           drugDB = drugDB.weight,
+                           community_cutoff = 10, 
+                           community_cutoff2 = 600, 
+                           filtering = TRUE, 
+                           drugTarget_cutoff = 500, 
+                           TFWeight = 2,
+                           direction = TRUE)
+{
+  if (direction) {
+    drugDB <- drugDB
+  } else {
+    drugDB <- lapply(drugDB, function(x) {
+      x <- abs(x)
+      return(x)
+    })
+  }
+  
+  drugdb <- drugDB[sapply(drugDB, length) < drugTarget_cutoff]
   allDrugs <- names(drugdb)
-
   community_graphs <- community_graphs_build(CCS, TFtarget)
   community_graphs <- community_graphs[sapply(community_graphs, length) > community_cutoff]
   community_graphs <- community_graphs[sapply(community_graphs, length) < community_cutoff2]
   print(paste("The number of sub-graphs is:", length(community_graphs)))
-
   CC.prediction <- mclapply(allDrugs, function(drug) {
-    drugPrediction(drug, community_graphs, TFWeight, CCS, drugdb)
+    drugPrediction(drug, community_graphs, TFWeight, CCS, 
+                   drugdb)
   }, mc.cores = parallel::detectCores() - 2)
-
   CC.prediction <- do.call(c, CC.prediction)
-  if (filtering) { CC.prediction <- CC.prediction[which(CC.prediction != 0)] }
-
-  scaled.rank <- rank(CC.prediction) /(length(CC.prediction) + 1)
+  if (filtering) {
+    CC.prediction <- CC.prediction[which(CC.prediction != 0)]
+  }
+  scaled.rank <- rank(CC.prediction)/(length(CC.prediction) + 1)
   scaled.rank <- sort(scaled.rank, decreasing = T)
   return(scaled.rank)
 }
+
 
