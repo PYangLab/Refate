@@ -115,6 +115,7 @@ drugPrediction <- function(drug,
 #'
 #' @param CCS A named numeric vector of CCS values for genes.
 #' @param community_graphs A list of community subgraphs (igraph objects).
+#' @param community_cutoff An integer specifying the number of genes in a community subgraph.
 #' @param drugdb A list of drug-target relationships with gene weights.
 #' @param TFWeight A numeric value for weighting transcription factors.
 #' @param Scoring A string specifying the scoring method. Options: "scoring1", "scoring2", "scoring3", etc.
