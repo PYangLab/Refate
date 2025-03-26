@@ -118,3 +118,45 @@
 #' @docType data
 #'
 "drugbases_metas"
+
+#' @title TTD Drug-target interaction data
+#' @usage data(TTD)
+#'
+#' @name TTD
+#' @docType data
+"TTD"
+
+#' @title CTD Drug-target interaction data
+#' @usage data(CTD)
+#'
+#' @name CTD
+#' @docType data
+"CTD"
+
+#' @title drugBank Drug-target interaction data
+#' @usage data(drugBank)
+#'
+#' @name drugBank
+#' @docType data
+"drugBank"
+
+#' @title STITCH Drug-target interaction data
+#' @usage data(STITCH)
+#'
+#' @name STITCH
+#' @docType data
+"STITCH"
+
+#' @title DrugRepurpose Drug-target interaction data
+#' @usage data(DrugRepurpose)
+#'
+#' @name DrugRepurpose
+#' @docType data
+"DrugRepurpose"
+
+#' @title DGIdb Drug-target interaction data
+#' @usage data(DGIdb)
+#'
+#' @name DGIdb
+#' @docType data
+"DGIdb"
