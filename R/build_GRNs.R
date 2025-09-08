@@ -1,6 +1,6 @@
-#' @title Build TRNs for Candidate Drug
+#' @title Build GRNs for Candidate Drug
 #'
-#' @description This function builds a trans-regulatory network (TRN) for a candidate drug by connecting the drug to kinases, transcription factors (TFs), and target genes through PPI and TF-target interactions.
+#' @description This function builds a trans-regulatory network (GRN) for a candidate drug by connecting the drug to kinases, transcription factors (TFs), and target genes through PPI and TF-target interactions.
 #'
 #' @param drug A string representing the name of the drug.
 #' @param fc A named numeric vector of fold-change values for genes.
@@ -13,9 +13,9 @@
 #' @return A force-directed network visualization (HTML widget) and an igraph object representing the network.
 #'
 #' @examples
-#' build_TRNs("quercetin", fc, kinome, TFs, String, TFtarget)
+#' build_GRNs("quercetin", fc, kinome, TFs, String, TFtarget)
 #'
-build_TRNs <- function(drug, CCS, kinome, TFs, StringDB, TFtarget, CCS_threshold = 0.02) {
+build_GRNs <- function(drug, CCS, kinome, TFs, StringDB, TFtarget, CCS_threshold = 0.02) {
   library(igraph)
   library(networkD3)
   library(dplyr)

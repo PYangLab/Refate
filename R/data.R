@@ -160,3 +160,11 @@
 #' @name DGIdb
 #' @docType data
 "DGIdb"
+
+#' @title CIDs to Drug Names mapping
+#' @description A data frame mapping Compound IDs (CIDs) to drug names.
+#' @usage data(all_drug_cids)
+#'
+#' @name all_drug_cids
+#' @docType data
+"all_drug_cids"

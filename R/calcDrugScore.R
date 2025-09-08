@@ -142,14 +142,16 @@ calcDrugScore <- function (CCS,
   
   drugdb <- drugDB[sapply(drugDB, length) < drugTarget_cutoff]
   allDrugs <- names(drugdb)
-  community_graphs <- community_graphs_build(CCS, TFtarget)
+  suppressWarnings(community_graphs <- community_graphs_build(CCS, TFtarget))
   community_graphs <- community_graphs[sapply(community_graphs, length) > community_cutoff]
   community_graphs <- community_graphs[sapply(community_graphs, length) < community_cutoff2]
   print(paste("The number of sub-graphs is:", length(community_graphs)))
+  
   CC.prediction <- mclapply(allDrugs, function(drug) {
     drugPrediction(drug, community_graphs, TFWeight, CCS, 
                    drugdb)
   }, mc.cores = parallel::detectCores() - 2)
+  
   CC.prediction <- do.call(c, CC.prediction)
   if (filtering) {
     CC.prediction <- CC.prediction[which(CC.prediction != 0)]
