@@ -168,3 +168,16 @@
 #' @name all_drug_cids
 #' @docType data
 "all_drug_cids"
+
+#' @title drug target data matrix
+#' @description A data frame representing drug target data matrix.
+#' @usage data(drug_target_matrix)
+#'
+#' @name target_data
+#' @docType data
+"target_data"
+
+#' @title ESC to CNCC top drug list
+#' @description A vector of top drugs for ESC to CNCC conversion.
+#' @usage data(ESC2CNCC_top_drug)
+#' @name ESC2CNCC_top_drug

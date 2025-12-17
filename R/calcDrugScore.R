@@ -19,7 +19,8 @@
 community_graphs_build <- function(CCS, TFtarget) {
   library(igraph)
 
-  TFtarget_filtered <- TFtarget[TFtarget[,1] %in% names(CCS) | TFtarget[,2] %in% names(CCS), ]
+  TFtarget_filtered <- TFtarget[TFtarget[,1] %in% names(CCS) | TFtarget[,2] %in% names(CCS), ] %>%
+    filter(is.na(gene1) == FALSE & is.na(gene2) == FALSE)
 
   g <- graph_from_data_frame(TFtarget_filtered, directed = FALSE)
   set.seed(123)
@@ -122,12 +123,12 @@ drugPrediction <- function(drug,
 #'
 #' @return A named numeric vector of drug scores.
 #'
-calcDrugScore <- function (CCS, 
+calcDrugScore <- function (CCS,
                            drugDB = drugDB.weight,
-                           community_cutoff = 10, 
-                           community_cutoff2 = 600, 
-                           filtering = TRUE, 
-                           drugTarget_cutoff = 500, 
+                           community_cutoff = 10,
+                           community_cutoff2 = 600,
+                           filtering = TRUE,
+                           drugTarget_cutoff = 500,
                            TFWeight = 2,
                            direction = TRUE)
 {
@@ -139,19 +140,19 @@ calcDrugScore <- function (CCS,
       return(x)
     })
   }
-  
+
   drugdb <- drugDB[sapply(drugDB, length) < drugTarget_cutoff]
   allDrugs <- names(drugdb)
   suppressWarnings(community_graphs <- community_graphs_build(CCS, TFtarget))
   community_graphs <- community_graphs[sapply(community_graphs, length) > community_cutoff]
   community_graphs <- community_graphs[sapply(community_graphs, length) < community_cutoff2]
   print(paste("The number of sub-graphs is:", length(community_graphs)))
-  
+
   CC.prediction <- mclapply(allDrugs, function(drug) {
-    drugPrediction(drug, community_graphs, TFWeight, CCS, 
+    drugPrediction(drug, community_graphs, TFWeight, CCS,
                    drugdb)
   }, mc.cores = parallel::detectCores() - 2)
-  
+
   CC.prediction <- do.call(c, CC.prediction)
   if (filtering) {
     CC.prediction <- CC.prediction[which(CC.prediction != 0)]

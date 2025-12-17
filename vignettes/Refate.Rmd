@@ -37,6 +37,7 @@ suppressMessages(
     library(igraph)
     library(tidyverse)
     library(parallel)
+    library(networkD3)
   }
 )
 
@@ -47,6 +48,7 @@ data(drugDB.weight)  # Drug-target interaction data
 data(TFs_Kinases)
 data(StringDB)
 data(drugbases_metas)
+data(target_data)
 ```
 
 # Calculate Cellular Conversion Score (CCS)
@@ -125,6 +127,7 @@ drug_description
 
 # Filtering drugs based on toxicity
 
+filter drugs based on the toxicity information from PubChem database
 ```{r, warning=FALSE}
 ## we first identify the top drugs
 top_drugs <- names(DPS)[which(DPS > 0.9) ]
@@ -133,7 +136,7 @@ drug_names <- top_drugs[1:100] # only use the top 100 drugs for demo
 
 data(all_drug_cids) 
 out <- filter_toxicity(drug_names, 
-                       all_drug_cids,
+                       all_drug_cids = all_drug_cids,
                        json_dir = "tmp/public/PubChem_json")
 
 out$resolution  # check which names mapped to which CIDs
@@ -141,4 +144,62 @@ out$filtered_table %>% dplyr::filter(Keep) %>% dplyr::select(CID, query, MW)
 
 ```
 
+
+# Clutering top drugs based on their target profiles
+To characterize mechanistic diversity among top candidate drugs identified from the ESC-to-CNCC conversion analysis, we clustered drugs based on their gene target directionality profiles. This approach groups drugs with similar target engagement patterns and supports the rational selection of compounds spanning distinct mechanisms of action for downstream experimental validation.
+
+```{r}
+
+data(ESC2CNCC_top_drug)
+data(target_data)
+data(all_drug_cids)
+
+cids <- all_drug_cids$cid[match(ESC2CNCC_top_drug, all_drug_cids$query)]
+
+target_data_subset <- target_data %>%
+  dplyr::filter(cid %in% cids) %>% 
+  dplyr::select(cid, genename, direction) %>% 
+  dplyr::filter(!is.na(genename))
+
+mat <- target_data_subset %>%
+  dplyr::group_by(genename, cid) %>%
+  dplyr::summarise(direction = direction[1], .groups = "drop") %>%   # or mean(direction)
+  pivot_wider(names_from = cid, values_from = direction, values_fill = 0) %>%
+  tibble::column_to_rownames("genename") %>%
+  as.matrix()
+
+colnames(mat) <- ESC2CNCC_top_drug[match(colnames(mat), cids)]
+
+# remove genes with no variation across drugs
+mat_filt <- mat[apply(mat, 1, sd) > 0, , drop = FALSE]
+mat_filt <- mat_filt[, apply(mat_filt, 2, sd) > 0, drop = FALSE]
+
+# restrict to genes hit by at least k drugs:
+k <- 10
+mat_filt <- mat_filt[rowSums(mat_filt != 0) >= k, , drop = FALSE]
+
+# Require that each drug hits at least m genes after filtering.
+m <- 10  
+mat_filt2 <- mat_filt[, colSums(mat_filt != 0) >= m, drop = FALSE]
+
+# distance matrix
+cor_drug <- cor(mat_filt, method = "pearson", use = "pairwise.complete.obs")
+dist_drug <- as.dist(1 - cor_drug)
+
+hc <- hclust(dist_drug, method = "average")  # average or ward.D2
+plot(hc, main = "Drug clustering based on gene targeting", xlab = "", sub = "")
+
+### heatmap visualisation
+library(pheatmap)
+
+pheatmap(
+  t(mat_filt2),
+  cluster_rows = hc,   # <- your precomputed tree
+  cluster_cols = TRUE,      # or another hclust if you have one
+  scale = "none",
+  show_rownames = TRUE,
+  show_colnames = FALSE,
+  color = colorRampPalette(c("#5074AF", "lightgrey", "#C64032"))(100)
+)
+```
 
