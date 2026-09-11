@@ -169,10 +169,12 @@
 #' @docType data
 "all_drug_cids"
 
-#' @title drug target data matrix
-#' @description A data frame representing drug target data matrix.
-#' @usage data(drug_target_matrix)
-#'
+#' @title Drug-target interaction data
+#' @description A data frame containing drug-target interaction records.
+#' @format A data frame with 713867 rows and 6 columns:
+#' \code{cid}, \code{dsn}, \code{genename}, \code{taxname},
+#' \code{action}, and \code{direction}.
+#' @usage data(target_data)
 #' @name target_data
 #' @docType data
 "target_data"
